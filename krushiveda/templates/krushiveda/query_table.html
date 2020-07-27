@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmers Query</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        td, th {
+          border: 2px solid #dddddd;
+          text-align: center;
+          padding: 8px;
+        }
+
+        tr:nth-child(odd) {
+          background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th width="5%">Sr. No</th>
+            <th width="60%">Query</th>
+            <th width="15%">Date</th>
+            <th width="15%">Status</th>
+            <th width="5%"></th>
+        </tr>
+        {% for key, query in queries.items %}
+            <tr>
+                <td><label>{{ key }}</label></td>
+                <td><p align="left">{{ query.question }}</p></td>
+                <td>{{ query.date|date:'d / m / Y' }}</td>
+                <td>
+                    {% if query.status %}
+                        <p class="text-success">Answered</p>
+                    {% else %}
+                        <p class="text-danger">Not Answered</p>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="farmer_query" method="get">
+                        {% csrf_token %}
+                        <input type="hidden" name="index" value="{{ key }}" />
+                        {% if query.status %}
+                            <input style="padding-left:32%; padding-right:32%" class="btn btn-primary" type="submit" value="Edit" />
+                        {% else %}
+                            <input class="btn btn-success" type="submit" value="Answer" />
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
