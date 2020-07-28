@@ -23,14 +23,14 @@ aware_datetime.tzinfo  # <UTC>
 nltk.download('stopwords')
 lp = LanguageProcessing()
 lp.train_model()
-print("Current Accuracy: ", lp.get_model_accuracy(), '%')
+#print("Current Accuracy: ", lp.get_model_accuracy(), '%')
 
 
 @csrf_exempt
 def disease_info(request):
     query = request.POST['disease_name'].split()
     plantName = query[0]
-    print(query)
+    #print(query)
     diseaseName = ' '.join(i for i in query[1:])
 
     data = dict()
@@ -46,7 +46,7 @@ def disease_info(request):
     # data['treatment'] = ' \n '.join(' '.join(j for j in treatment[i:i+5]) for i in range(0, len(treatment), 5))
     data['description'] = ' '.join(description)
     data['treatment'] = ' '.join(treatment)
-    print(data)
+    #print(data)
 
     diseaseTrack = DiseaseTrackRecord()
     diseaseTrack.app_id = request.POST['app_id']
@@ -69,11 +69,11 @@ def disease_info(request):
 def index(request):
     global lp
     data = dict()
-    print("Query: ", request.POST['query'])
+    #print("Query: ", request.POST['query'])
     output = data['answer'] = lp.predict_text_class(request.POST['query'])
     output = output.split('_')
-    print(' '.join([i.capitalize() for i in output[1:]]))
-    print(output[0].capitalize())
+    #print(' '.join([i.capitalize() for i in output[1:]]))
+    #print(output[0].capitalize())
     if len(output) > 3:
         disease = Diseases.objects.get(disease_name=' '.join([i.capitalize() for i in output[1:len(output) - 1]]),
                                        plant_name=output[0].capitalize())
@@ -86,20 +86,21 @@ def index(request):
         else:
             data['answer'] = disease.get_english_treatment()
     except:
-        print("Error while querying")
+        pass
+        #print("Error while querying")
     return JsonResponse(data, safe=False)
 
 
 def train(request):
-    print('Requesting')
+    #print('Requesting')
     return HttpResponse(lp.predict_text_class("Tell me something about Potato Early blight ?"))
 
 
 @csrf_exempt
 def helpline(request):
-    print('App ID: ', request.POST['app_id'])
-    print('App Location', request.POST['app_location'])
-    print('App Query: ', request.POST['query'])
+    #print('App ID: ', request.POST['app_id'])
+    #print('App Location', request.POST['app_location'])
+    #print('App Query: ', request.POST['query'])
 
     query = FarmerQueries()
     query.app_id = int(request.POST['app_id'])
@@ -128,16 +129,17 @@ def query_operator(request):
 
 @csrf_exempt
 def StartUpQuery(request):
-    print('App ID: ', request.POST['app_id'])
-    print('Longitude', request.POST['app_longitude'])
-    print('Latitude', request.POST['app_latitude'])
+    #print('App ID: ', request.POST['app_id'])
+    #print('Longitude', request.POST['app_longitude'])
+    #print('Latitude', request.POST['app_latitude'])
     areaToleranceInKm = 10
     # diseaseTrack = DiseaseTrackRecord.objects.filter(app_id=request.POST['app_id'], dateTime__lte= datetime.datetime.today(), dateTime__gt=datetime.datetime.today()-datetime.timedelta(days=30))
     diseaseTrack = DiseaseTrackRecord.objects.filter(app_id=request.POST['app_id'], dateTime__lte=datetime.today(), dateTime__gt=datetime.today()-timedelta(days=30), notified=False)
     disease = CheckDiseaseInRegion(request.POST['app_id'], request.POST['app_longitude'], request.POST['app_latitude'], areaToleranceInKm)
 
     for data in diseaseTrack:
-        print(data)
+        pass
+        #print(data)
 
     if diseaseTrack.exists() and not diseaseTrack[0].notified:
         diseaseTrack[0].notified = True
@@ -159,13 +161,14 @@ def StartUpQuery(request):
 
 @csrf_exempt
 def check_pending_queries(request):
-    print("App ID: ", request.POST['app_id'], "App Location: ", request.POST['app_location'])
+    #print("App ID: ", request.POST['app_id'], "App Location: ", request.POST['app_location'])
     data = {'status': 'success'}
     queries = FarmerQueries.objects.filter(app_id=request.POST['app_id'], location=request.POST['app_location'], isQueryAnswered=1, isQueryViewed=0)
     count = 0
 
     for i in FarmerQueries.objects.all():
-        print('APP ID: ', i.app_id, 'APP LOC: ', i.location, 'Query: ', i.query)
+        pass
+        #print('APP ID: ', i.app_id, 'APP LOC: ', i.location, 'Query: ', i.query)
 
     for query in queries:
         data['query'] = ' '.join(i.capitalize() for i in query.query.split(' '))
@@ -180,8 +183,8 @@ def check_pending_queries(request):
 
 
 def CheckDiseaseInRegion(app_id, long, lat, tolerance):
-    print(datetime.today())
-    print(datetime.today()-timedelta(days=30))
+    #print(datetime.today())
+    #print(datetime.today()-timedelta(days=30))
     # diseaseTracks = DiseaseTrackRecord.objects.filter(dateTime__lte=datetime.datetime.today(), dateTime__gt=datetime.datetime.today()-datetime.timedelta(days=30))
     diseaseTracks = DiseaseTrackRecord.objects.filter(dateTime__lte=datetime.today(), dateTime__gt=datetime.today()-timedelta(days=30), notified=False)
     disease = ''
@@ -219,13 +222,13 @@ class FarmerQueriePage(TemplateView):
     template_name = 'krushiveda/farmer_query.html'
 
     def get(self, request):
-        print('Index: ', request.GET.get('index'))
+        #print('Index: ', request.GET.get('index'))
         model = FarmerQueries.objects.get(pk=request.GET.get('index'))
         form = QueryForm(instance=model)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        print(request.POST)
+        #print(request.POST)
         if request.POST.get('isQueryAnswered') == 'on':
             query = FarmerQueries.objects.get(pk=request.POST.get('id'))
             query.answer = request.POST.get('answer')
