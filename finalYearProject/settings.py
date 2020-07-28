@@ -26,7 +26,7 @@ SECRET_KEY = 'sqvpng%kha4a@8yy%y%st(#mz!7*2$2b((@47$j0$pyh*!*w^7'
 DEBUG = False
 
 # ALLOWED_HOSTS = ["*", ]
-ALLOWED_HOSTS = ["sleepy-spire-48763.herokuapp.com",]
+ALLOWED_HOSTS = ["damp-crag-22361.herokuapp.com",]
 
 # Application definition
 
