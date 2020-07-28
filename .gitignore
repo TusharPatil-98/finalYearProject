@@ -1,0 +1,4 @@
+/venv
+__pycache__
+db.sqlite3          # not needed if you're using Postgres locally
+finalYearProject/static/
