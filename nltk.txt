@@ -1,4 +1,4 @@
 stopwords
 wordnet
-stem.wordnet.WordNetLemmatizer
+stem
 word_tokenize
